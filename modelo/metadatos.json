@@ -1,0 +1,77 @@
+{
+  "arquitectura": "mobilenet_v3_large",
+  "clases": [
+    "impresora",
+    "laptop",
+    "monitor",
+    "mouse",
+    "silla",
+    "teclado"
+  ],
+  "tam_entrada": 224,
+  "normalizacion": {
+    "media": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "desv": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "metricas": {
+    "exactitud_prueba": 0.9241,
+    "exactitud_validacion": 0.9303,
+    "f1_macro": 0.9237,
+    "por_clase": {
+      "impresora": {
+        "precision": 0.9855,
+        "recall": 0.9067,
+        "f1": 0.9444,
+        "soporte": 75
+      },
+      "laptop": {
+        "precision": 0.9455,
+        "recall": 0.8125,
+        "f1": 0.8739,
+        "soporte": 128
+      },
+      "monitor": {
+        "precision": 0.8889,
+        "recall": 0.9481,
+        "f1": 0.9176,
+        "soporte": 135
+      },
+      "mouse": {
+        "precision": 0.9852,
+        "recall": 0.9852,
+        "f1": 0.9852,
+        "soporte": 135
+      },
+      "silla": {
+        "precision": 0.9609,
+        "recall": 0.9111,
+        "f1": 0.9354,
+        "soporte": 135
+      },
+      "teclado": {
+        "precision": 0.808,
+        "recall": 0.9806,
+        "f1": 0.886,
+        "soporte": 103
+      }
+    }
+  },
+  "latencia_cpu_ms": {
+    "mediana": 2.15,
+    "p95": 2.24
+  },
+  "dataset": {
+    "fuente": "Open Images V7 (recortes por caja delimitadora)",
+    "train": 3292,
+    "val": 703,
+    "test": 711
+  }
+}

@@ -1,0 +1,15 @@
+.git
+.gitignore
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+notebooks/
+scripts/
+modelo/*.png
+datos/
+.DS_Store
+.pytest_cache/
