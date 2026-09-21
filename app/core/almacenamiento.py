@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime, timezone
 
 import boto3
+from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError
 
 from app.core.config import settings
@@ -21,7 +22,12 @@ _s3 = None
 def cliente():
     global _s3
     if _s3 is None:
-        _s3 = boto3.client("s3", region_name=settings.AWS_REGION)
+        # SigV4 explicito: sin esto boto3 puede firmar las URL con SigV2,
+        # formato que S3 considera obsoleto.
+        _s3 = boto3.client(
+            "s3", region_name=settings.AWS_REGION,
+            config=Config(signature_version="s3v4"),
+        )
     return _s3
 
 

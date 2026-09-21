@@ -236,10 +236,45 @@ El rol de ejecución de la tarea necesita leer `/inventory/prod/*` en SSM y
 descifrar con KMS. El rol de la tarea necesita `s3:PutObject` y `s3:GetObject`
 limitados al bucket de imágenes.
 
-### 4. Recursos recomendados
+### 4. Recursos
 
-0,5 vCPU y 2 GB de memoria. El modelo ocupa unos 60 MB en memoria; el resto es
-margen para `onnxruntime` y las peticiones concurrentes.
+0,5 vCPU y 1 GB de memoria. La imagen pesa 164 MB y el modelo ocupa unos 60 MB
+en memoria; el resto es margen para `onnxruntime` y las peticiones
+concurrentes.
+
+### 5. Operación
+
+La carpeta `infra/` contiene los guiones con que se opera el sistema completo
+(inventario y clasificador). Leen los identificadores de
+`infra/aws-resources.env`, que no se versiona; `aws-resources.env.example`
+lista las variables que espera.
+
+| Guion | Efecto |
+|---|---|
+| `encender.sh` | Restaura la base desde el snapshot, recrea el balanceador con las reglas `/api` y `/ml`, levanta ambos servicios, reapunta CloudFront y regenera el panel de monitoreo |
+| `apagar.sh` | Lleva los servicios a cero, elimina el balanceador y guarda la base en un snapshot. Costo residual menor a 1 USD al mes |
+| `dashboard.sh` | Crea el panel de CloudWatch y las alarmas |
+| `destruir.sh` | Elimina **toda** la infraestructura de forma irreversible. Pide confirmación escrita |
+
+El balanceador se elimina en cada apagado porque no admite pausa y factura por
+hora. Como se recrea con un identificador distinto, `encender.sh` reapunta
+CloudFront y regenera el panel: un dashboard fijo quedaría mostrando gráficas
+vacías de un balanceador inexistente sin dar ningún error.
+
+## Monitoreo
+
+Panel de CloudWatch `inventory-sistema`:
+
+- Peticiones, latencia p95 y errores 4xx/5xx por servicio (métricas del ALB)
+- CPU y memoria de ambos servicios (ECS) y de la base de datos (RDS)
+- Destinos saludables detrás del balanceador
+- Uso del modelo: predicciones por categoría, confianza media, latencia e
+  incertidumbre, calculados con Logs Insights sobre los logs JSON que emite el
+  servicio. Se evitan así las métricas personalizadas, que tienen costo por
+  métrica.
+
+Alarmas: errores 5xx del clasificador, latencia media sobre 1 s y ausencia de
+destinos saludables en cualquiera de los dos servicios.
 
 ---
 

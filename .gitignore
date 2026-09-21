@@ -4,3 +4,6 @@ __pycache__/
 .env
 .DS_Store
 datos/
+
+# Identificadores de la cuenta: especificos del entorno
+infra/aws-resources.env
